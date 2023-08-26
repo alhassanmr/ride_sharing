@@ -3,8 +3,8 @@ package com.gh.ridesharing.controller;
 import com.gh.ridesharing.entity.Driver;
 import com.gh.ridesharing.enums.DriverStatus;
 import com.gh.ridesharing.service.DriverService;
+import com.gh.ridesharing.service.RideHistoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,10 +24,10 @@ import java.util.Optional;
 public class DriverController {
 
     private final DriverService driverService;
-
-    @Autowired
-    public DriverController(DriverService driverService) {
+    private final RideHistoryService rideHistoryService;
+    public DriverController(DriverService driverService, RideHistoryService rideHistoryService) {
         this.driverService = driverService;
+        this.rideHistoryService = rideHistoryService;
     }
 
     @PostMapping
