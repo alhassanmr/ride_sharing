@@ -28,12 +28,12 @@ public class DatabaseInitializer implements CommandLineRunner {
         Optional<User> existingSuperUser = userService.getUserByUsername("admin");
 
         // If the super user does not exist, then create it
-        if (!existingSuperUser.isPresent()) {
+        if (existingSuperUser.isEmpty()) {
             // Create a super user
             User superUser = new User();
             superUser.setUsername("admin");
             superUser.setEmail("admin@example.com");
-            superUser.setPassword(passwordEncoder.encode("adminPassword")); // Encode the password
+            superUser.setPassword("adminPassword"); // Encode the password
             superUser.setRoleType(RoleType.SUPERUSER); // Assign the SUPERUSER role
 
             // Save the super user to the database
