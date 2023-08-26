@@ -1,6 +1,7 @@
 package com.gh.ridesharing.controller;
 
 import com.gh.ridesharing.entity.Driver;
+import com.gh.ridesharing.enums.DriverStatus;
 import com.gh.ridesharing.service.DriverService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
@@ -54,5 +56,19 @@ public class DriverController {
         log.info("Request to delete driver with ID: {}", driverId);
         driverService.deleteById(driverId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{driverId}/availability")
+    public ResponseEntity<Driver> setDriverAvailability(@PathVariable Long driverId, @RequestParam boolean available) {
+        log.info("Request to set driver availability for ID: {}", driverId);
+        Driver updatedDriver = driverService.setAvailability(driverId, available);
+        return ResponseEntity.ok(updatedDriver);
+    }
+
+    @PutMapping("/{driverId}/status")
+    public ResponseEntity<Driver> setDriverStatus(@PathVariable Long driverId, @RequestParam DriverStatus status) {
+        log.info("Request to set driver status for ID: {}", driverId);
+        Driver updatedDriver = driverService.setStatus(driverId, status);
+        return ResponseEntity.ok(updatedDriver);
     }
 }

@@ -17,13 +17,14 @@ public class Driver extends BaseEntity {
     private String driverLicense;
 
     @Enumerated(EnumType.STRING)
-    private DriverStatus driverStatus; // Enum for driver status (e.g., ACTIVE, INACTIVE)
+    private DriverStatus driverStatus;
 
     private String vehicleMake;
     private String vehicleModel;
     private String vehiclePlateNumber;
 
     private double averageRating;
+    private boolean isAvailable;
 
 }
 
