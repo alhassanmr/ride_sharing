@@ -7,7 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface DriverRepository extends BaseEntityRepository<Driver> {
-    Optional<Driver> findByDriverLicense(String driverLicense);
 }
 
 

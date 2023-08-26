@@ -18,7 +18,4 @@ public class DriverService extends BaseServiceImpl<Driver> {
         this.driverRepository = driverRepository;
     }
 
-    public Optional<Driver> findByDriverLicense(String driverLicense) {
-        return driverRepository.findByDriverLicense(driverLicense);
-    }
 }

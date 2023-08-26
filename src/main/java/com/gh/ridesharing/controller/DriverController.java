@@ -42,13 +42,6 @@ public class DriverController {
         return driver.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/driverLicense/{driverLicense}")
-    public ResponseEntity<Driver> getDriverByDriverLicense(@PathVariable String driverLicense) {
-        log.info("Request to get driver by driver license: {}", driverLicense);
-        Optional<Driver> driver = driverService.findByDriverLicense(driverLicense);
-        return driver.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
     @PutMapping("/{driverId}")
     public ResponseEntity<Driver> updateDriver(@PathVariable Long driverId, @RequestBody Driver updatedDriver) {
         log.info("Request to update driver with ID: {}", driverId);

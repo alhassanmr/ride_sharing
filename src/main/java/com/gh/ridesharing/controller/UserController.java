@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.naming.AuthenticationException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -56,6 +57,13 @@ public class UserController {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        log.info("Request to get all users");
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+
 
 }
 
