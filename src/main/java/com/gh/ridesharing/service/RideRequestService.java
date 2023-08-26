@@ -2,6 +2,7 @@ package com.gh.ridesharing.service;
 
 import com.gh.ridesharing.entity.Driver;
 import com.gh.ridesharing.entity.RideRequest;
+import com.gh.ridesharing.enums.RideRequestStatus;
 import com.gh.ridesharing.repository.RideRequestRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +25,9 @@ public class RideRequestService {
         return rideRequestRepository.save(newRideRequest);
     }
 
-    public Optional<RideRequest> getRideRequestById(Long rideRequestId) {
-        return rideRequestRepository.findById(rideRequestId);
-    }
-
     public RideRequest updateRideRequest(Long rideRequestId, RideRequest updatedRideRequest) {
         // Additional logic and validation if needed
-        RideRequest existingRideRequest = getRideRequestById(rideRequestId)
-                .orElseThrow(() -> new EntityNotFoundException("Ride Request not found."));
+        RideRequest existingRideRequest = getRideRequestById(rideRequestId);
         // Update the existingRideRequest object with fields from updatedRideRequest
         return rideRequestRepository.save(existingRideRequest);
     }
@@ -45,6 +41,16 @@ public class RideRequestService {
 
         rideRequest.setAssignedDriver(driver);
         return rideRequestRepository.save(rideRequest);
+    }
+    public RideRequest updateRideRequestStatus(Long rideRequestId, RideRequestStatus newStatus) {
+        RideRequest rideRequest = getRideRequestById(rideRequestId);
+        rideRequest.setStatus(newStatus);
+        return rideRequestRepository.save(rideRequest);
+    }
+
+    private RideRequest getRideRequestById(Long rideRequestId) {
+        return rideRequestRepository.findById(rideRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Ride request with ID " + rideRequestId + " not found."));
     }
 
 }
