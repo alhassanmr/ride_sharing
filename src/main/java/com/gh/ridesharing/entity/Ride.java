@@ -36,7 +36,7 @@ public class Ride extends BaseEntity {
     private Customer customer;
 
     @ManyToOne
-    private Driver assignedDriver;
+    private Driver driver;
 
     private int rating;
 }

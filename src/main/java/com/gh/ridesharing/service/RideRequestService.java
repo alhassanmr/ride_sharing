@@ -43,7 +43,7 @@ public class RideRequestService {
         Ride ride = rideRepository.findById(rideRequestId)
                 .orElseThrow(() -> new EntityNotFoundException("Ride request not found"));
 
-        ride.setAssignedDriver(driver);
+        ride.setDriver(driver);
         return rideRepository.save(ride);
     }
     public Ride updateRideRequestStatus(Long rideRequestId, RideRequestStatus newStatus) {
@@ -65,8 +65,8 @@ public class RideRequestService {
         ride.setRating(rating);
         rideRepository.save(ride);
 
-        if (ride.getAssignedDriver() != null) {
-            Driver driver = ride.getAssignedDriver();
+        if (ride.getDriver() != null) {
+            Driver driver = ride.getDriver();
             int currentDriverRating = driver.getRating();
             int totalRides = driver.getTotalRides();
 
