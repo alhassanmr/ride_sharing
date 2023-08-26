@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "ride_requests")
-public class RideRequest extends BaseEntity {
+public class Ride extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,73 +1,72 @@
 package com.gh.ridesharing.service;
 
 import com.gh.ridesharing.entity.Driver;
-import com.gh.ridesharing.entity.RideRequest;
+import com.gh.ridesharing.entity.Ride;
 import com.gh.ridesharing.enums.RideRequestStatus;
-import com.gh.ridesharing.repository.RideRequestRepository;
+import com.gh.ridesharing.repository.RideRepository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Service
 public class RideRequestService {
 
-    private final RideRequestRepository rideRequestRepository;
+    private final RideRepository rideRepository;
     private final DriverService driverService;
 
-    public RideRequestService(RideRequestRepository rideRequestRepository, DriverService driverService) {
-        this.rideRequestRepository = rideRequestRepository;
+    public RideRequestService(RideRepository rideRepository, DriverService driverService) {
+        this.rideRepository = rideRepository;
         this.driverService = driverService;
     }
 
-    public RideRequest createRideRequest(RideRequest newRideRequest) {
+    public Ride createRideRequest(Ride newRide) {
         // Additional logic and validation if needed
-        return rideRequestRepository.save(newRideRequest);
+        return rideRepository.save(newRide);
     }
 
-    public RideRequest getRideRequestById(Long rideRequestId) {
-        return rideRequestRepository.findById(rideRequestId)
+    public Ride getRideRequestById(Long rideRequestId) {
+        return rideRepository.findById(rideRequestId)
                 .orElseThrow(() -> new EntityNotFoundException("Ride request with ID " + rideRequestId + " not found."));
     }
 
-    public RideRequest updateRideRequest(Long rideRequestId, RideRequest updatedRideRequest) {
+    public Ride updateRideRequest(Long rideRequestId, Ride updatedRide) {
         // Additional logic and validation if needed
-        RideRequest existingRideRequest = getRideRequestById(rideRequestId);
+        Ride existingRide = getRideRequestById(rideRequestId);
         // Update the existingRideRequest object with fields from updatedRideRequest
-        return rideRequestRepository.save(existingRideRequest);
+        return rideRepository.save(existingRide);
     }
 
     public void deleteRideRequest(Long rideRequestId) {
-        rideRequestRepository.deleteById(rideRequestId);
+        rideRepository.deleteById(rideRequestId);
     }
-    public RideRequest assignDriverToRideRequest(Long rideRequestId, Driver driver) {
-        RideRequest rideRequest = rideRequestRepository.findById(rideRequestId)
+    public Ride assignDriverToRideRequest(Long rideRequestId, Driver driver) {
+        Ride ride = rideRepository.findById(rideRequestId)
                 .orElseThrow(() -> new EntityNotFoundException("Ride request not found"));
 
-        rideRequest.setAssignedDriver(driver);
-        return rideRequestRepository.save(rideRequest);
+        ride.setAssignedDriver(driver);
+        return rideRepository.save(ride);
     }
-    public RideRequest updateRideRequestStatus(Long rideRequestId, RideRequestStatus newStatus) {
-        RideRequest rideRequest = getRideRequestById(rideRequestId);
-        rideRequest.setStatus(newStatus);
-        return rideRequestRepository.save(rideRequest);
+    public Ride updateRideRequestStatus(Long rideRequestId, RideRequestStatus newStatus) {
+        Ride ride = getRideRequestById(rideRequestId);
+        ride.setStatus(newStatus);
+        return rideRepository.save(ride);
     }
-    public RideRequest rateRideRequest(Long rideRequestId, int rating) {
-        RideRequest rideRequest = getRideRequestById(rideRequestId);
+    public Ride rateRideRequest(Long rideRequestId, int rating) {
+        Ride ride = getRideRequestById(rideRequestId);
 
-        if (rideRequest.getStatus() != RideRequestStatus.COMPLETED) {
+        if (ride.getStatus() != RideRequestStatus.COMPLETED) {
             throw new IllegalStateException("Ride request is not completed.");
         }
 
-        if (rideRequest.getRating() != 0) {
+        if (ride.getRating() != 0) {
             throw new IllegalStateException("Ride request has already been rated.");
         }
 
-        rideRequest.setRating(rating);
-        rideRequestRepository.save(rideRequest);
+        ride.setRating(rating);
+        rideRepository.save(ride);
 
-        if (rideRequest.getAssignedDriver() != null) {
-            Driver driver = rideRequest.getAssignedDriver();
+        if (ride.getAssignedDriver() != null) {
+            Driver driver = ride.getAssignedDriver();
             int currentDriverRating = driver.getRating();
             int totalRides = driver.getTotalRides();
 
@@ -77,7 +76,7 @@ public class RideRequestService {
             driverService.update(driver.getId(), driver);
         }
 
-        return rideRequest;
+        return ride;
     }
 
 

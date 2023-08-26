@@ -1,7 +1,7 @@
 package com.gh.ridesharing.controller;
 
 import com.gh.ridesharing.entity.Driver;
-import com.gh.ridesharing.entity.RideRequest;
+import com.gh.ridesharing.entity.Ride;
 import com.gh.ridesharing.enums.RideRequestStatus;
 import com.gh.ridesharing.service.DriverService;
 import com.gh.ridesharing.service.RideRequestService;
@@ -28,34 +28,34 @@ public class RideRequestController {
     }
 
     @PutMapping("/{rideRequestId}/assign-driver/{driverId}")
-    public ResponseEntity<RideRequest> assignDriverToRideRequest(
+    public ResponseEntity<Ride> assignDriverToRideRequest(
             @PathVariable Long rideRequestId,
             @PathVariable Long driverId) {
 
         Driver driver = driverService.getById(driverId)
                 .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
 
-        RideRequest assignedRideRequest = rideRequestService.assignDriverToRideRequest(rideRequestId, driver);
-        return ResponseEntity.ok(assignedRideRequest);
+        Ride assignedRide = rideRequestService.assignDriverToRideRequest(rideRequestId, driver);
+        return ResponseEntity.ok(assignedRide);
     }
 
     @PutMapping("/{rideRequestId}/accept")
-    public ResponseEntity<RideRequest> acceptRideRequest(@PathVariable Long rideRequestId) {
+    public ResponseEntity<Ride> acceptRideRequest(@PathVariable Long rideRequestId) {
         log.info("Driver accepting ride request with ID: {}", rideRequestId);
-        RideRequest updatedRideRequest = rideRequestService.updateRideRequestStatus(rideRequestId, RideRequestStatus.ACCEPTED);
-        return ResponseEntity.ok(updatedRideRequest);
+        Ride updatedRide = rideRequestService.updateRideRequestStatus(rideRequestId, RideRequestStatus.ACCEPTED);
+        return ResponseEntity.ok(updatedRide);
     }
 
     @PutMapping("/{rideRequestId}/reject")
-    public ResponseEntity<RideRequest> rejectRideRequest(@PathVariable Long rideRequestId) {
+    public ResponseEntity<Ride> rejectRideRequest(@PathVariable Long rideRequestId) {
         log.info("Driver rejecting ride request with ID: {}", rideRequestId);
-        RideRequest updatedRideRequest = rideRequestService.updateRideRequestStatus(rideRequestId, RideRequestStatus.REJECTED);
-        return ResponseEntity.ok(updatedRideRequest);
+        Ride updatedRide = rideRequestService.updateRideRequestStatus(rideRequestId, RideRequestStatus.REJECTED);
+        return ResponseEntity.ok(updatedRide);
     }
 
     @PutMapping("/{rideId}/rate")
-    public ResponseEntity<RideRequest> rateRide(@PathVariable Long rideRequestId, @RequestParam int rating) {
-        RideRequest ratedRide = rideRequestService.rateRideRequest(rideRequestId, rating);
+    public ResponseEntity<Ride> rateRide(@PathVariable Long rideRequestId, @RequestParam int rating) {
+        Ride ratedRide = rideRequestService.rateRideRequest(rideRequestId, rating);
         return ResponseEntity.ok(ratedRide);
     }
 }
