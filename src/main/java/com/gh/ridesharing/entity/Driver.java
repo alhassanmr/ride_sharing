@@ -25,6 +25,7 @@ public class Driver extends BaseEntity {
 
     private double averageRating;
     private boolean isAvailable;
+    private int rating;
+    private int totalRides;
 
 }
-

@@ -25,6 +25,11 @@ public class RideRequestService {
         return rideRequestRepository.save(newRideRequest);
     }
 
+    public RideRequest getRideRequestById(Long rideRequestId) {
+        return rideRequestRepository.findById(rideRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Ride request with ID " + rideRequestId + " not found."));
+    }
+
     public RideRequest updateRideRequest(Long rideRequestId, RideRequest updatedRideRequest) {
         // Additional logic and validation if needed
         RideRequest existingRideRequest = getRideRequestById(rideRequestId);
@@ -47,11 +52,35 @@ public class RideRequestService {
         rideRequest.setStatus(newStatus);
         return rideRequestRepository.save(rideRequest);
     }
+    public RideRequest rateRideRequest(Long rideRequestId, int rating) {
+        RideRequest rideRequest = getRideRequestById(rideRequestId);
 
-    private RideRequest getRideRequestById(Long rideRequestId) {
-        return rideRequestRepository.findById(rideRequestId)
-                .orElseThrow(() -> new EntityNotFoundException("Ride request with ID " + rideRequestId + " not found."));
+        if (rideRequest.getStatus() != RideRequestStatus.COMPLETED) {
+            throw new IllegalStateException("Ride request is not completed.");
+        }
+
+        if (rideRequest.getRating() != 0) {
+            throw new IllegalStateException("Ride request has already been rated.");
+        }
+
+        rideRequest.setRating(rating);
+        rideRequestRepository.save(rideRequest);
+
+        if (rideRequest.getAssignedDriver() != null) {
+            Driver driver = rideRequest.getAssignedDriver();
+            int currentDriverRating = driver.getRating();
+            int totalRides = driver.getTotalRides();
+
+            int newDriverRating = ((currentDriverRating * totalRides) + rating) / (totalRides + 1);
+            driver.setRating(newDriverRating);
+            driver.setTotalRides(totalRides + 1);
+            driverService.update(driver.getId(), driver);
+        }
+
+        return rideRequest;
     }
+
+
 
 }
 

@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -22,6 +23,12 @@ public class RideRequest extends BaseEntity {
     private Long id;
     private String fromLocation;
     private String toLocation;
+
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+    private double fare;
+
     @Enumerated(EnumType.STRING)
     private RideRequestStatus status;
 
@@ -30,5 +37,7 @@ public class RideRequest extends BaseEntity {
 
     @ManyToOne
     private Driver assignedDriver;
+
+    private int rating;
 }
 

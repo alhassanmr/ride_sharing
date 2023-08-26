@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
@@ -50,6 +51,12 @@ public class RideRequestController {
         log.info("Driver rejecting ride request with ID: {}", rideRequestId);
         RideRequest updatedRideRequest = rideRequestService.updateRideRequestStatus(rideRequestId, RideRequestStatus.REJECTED);
         return ResponseEntity.ok(updatedRideRequest);
+    }
+
+    @PutMapping("/{rideId}/rate")
+    public ResponseEntity<RideRequest> rateRide(@PathVariable Long rideRequestId, @RequestParam int rating) {
+        RideRequest ratedRide = rideRequestService.rateRideRequest(rideRequestId, rating);
+        return ResponseEntity.ok(ratedRide);
     }
 }
 
