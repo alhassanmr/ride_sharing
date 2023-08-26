@@ -12,10 +12,13 @@ public class DriverService extends BaseServiceImpl<Driver> {
 
     private final DriverRepository driverRepository;
 
-    @Autowired
     public DriverService(DriverRepository driverRepository) {
         super(driverRepository);
         this.driverRepository = driverRepository;
+    }
+
+    public Optional<Driver> getById(Long driverId) {
+        return driverRepository.findById(driverId);
     }
 
 }
