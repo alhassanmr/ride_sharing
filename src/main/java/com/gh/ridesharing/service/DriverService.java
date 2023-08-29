@@ -1,12 +1,12 @@
 package com.gh.ridesharing.service;
 
 import com.gh.ridesharing.entity.Driver;
-import com.gh.ridesharing.enums.DriverStatus;
+import com.gh.ridesharing.enums.AvailabilityStatus;
 import com.gh.ridesharing.repository.DriverRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,24 +23,17 @@ public class DriverService extends BaseServiceImpl<Driver> {
         return driverRepository.findById(driverId);
     }
 
-    public Driver setAvailability(Long driverId, boolean isAvailable) {
+    public Driver setAvailability(Long driverId, AvailabilityStatus status) {
         Optional<Driver> optionalDriver = getById(driverId);
         if (optionalDriver.isPresent()) {
             Driver driver = optionalDriver.get();
-            driver.setAvailable(isAvailable);
+            driver.setStatus(status);
             return driverRepository.save(driver);
         }
         throw new EntityNotFoundException("Driver not found with ID: " + driverId);
     }
 
-    public Driver setStatus(Long driverId, DriverStatus status) {
-        Optional<Driver> optionalDriver = getById(driverId);
-        if (optionalDriver.isPresent()) {
-            Driver driver = optionalDriver.get();
-            driver.setDriverStatus(status);
-            return driverRepository.save(driver);
-        }
-        throw new EntityNotFoundException("Driver not found with ID: " + driverId);
+    public List<Driver> getAllDrivers() {
+        return driverRepository.findAll();
     }
-
 }

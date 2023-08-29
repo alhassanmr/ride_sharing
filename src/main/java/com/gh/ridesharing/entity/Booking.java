@@ -8,6 +8,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 
+import com.gh.ridesharing.enums.RideType;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -57,6 +58,10 @@ public class Booking extends BaseEntity {
 
     @Column(name = "customer_feedback")
     private String customerFeedback;
+
+    @Column(name = "ride_type")
+    @Enumerated(EnumType.STRING)
+    private RideType type;
 }
 
 

@@ -1,6 +1,8 @@
 package com.gh.ridesharing.entity;
 
-import com.gh.ridesharing.enums.DriverStatus;
+import com.gh.ridesharing.enums.AvailabilityStatus;
+import com.gh.ridesharing.enums.Gender;
+import com.gh.ridesharing.enums.VehicleType;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -17,14 +19,20 @@ public class Driver extends BaseEntity {
     private String driverLicense;
 
     @Enumerated(EnumType.STRING)
-    private DriverStatus driverStatus;
+    private AvailabilityStatus status;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     private String vehicleMake;
     private String vehicleModel;
     private String vehiclePlateNumber;
+    @Enumerated(EnumType.STRING)
+    private VehicleType vehicleType;
+
+    private double latitude;
+    private double longitude;
 
     private double averageRating;
-    private boolean isAvailable;
     private int rating;
     private int totalRides;
 

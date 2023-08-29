@@ -1,7 +1,7 @@
 package com.gh.ridesharing.controller;
 
 import com.gh.ridesharing.entity.Driver;
-import com.gh.ridesharing.enums.DriverStatus;
+import com.gh.ridesharing.enums.AvailabilityStatus;
 import com.gh.ridesharing.service.DriverService;
 import com.gh.ridesharing.service.RideHistoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -59,16 +60,16 @@ public class DriverController {
     }
 
     @PutMapping("/{driverId}/availability")
-    public ResponseEntity<Driver> setDriverAvailability(@PathVariable Long driverId, @RequestParam boolean available) {
+    public ResponseEntity<Driver> setDriverAvailability(@PathVariable Long driverId, @RequestParam AvailabilityStatus status) {
         log.info("Request to set driver availability for ID: {}", driverId);
-        Driver updatedDriver = driverService.setAvailability(driverId, available);
+        Driver updatedDriver = driverService.setAvailability(driverId, status);
         return ResponseEntity.ok(updatedDriver);
     }
 
-    @PutMapping("/{driverId}/status")
-    public ResponseEntity<Driver> setDriverStatus(@PathVariable Long driverId, @RequestParam DriverStatus status) {
-        log.info("Request to set driver status for ID: {}", driverId);
-        Driver updatedDriver = driverService.setStatus(driverId, status);
-        return ResponseEntity.ok(updatedDriver);
+    @GetMapping
+    public ResponseEntity<List<Driver>> getAllDrivers() {
+        log.info("Request to get all users");
+        List<Driver> drivers = driverService.getAllDrivers();
+        return ResponseEntity.ok(drivers);
     }
 }

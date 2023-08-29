@@ -3,7 +3,6 @@ package com.gh.ridesharing.controller;
 import com.gh.ridesharing.entity.User;
 import com.gh.ridesharing.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,6 @@ public class UserController {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
 
-    @Autowired
     public UserController(UserService userService, UserDetailsService userDetailsService) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
