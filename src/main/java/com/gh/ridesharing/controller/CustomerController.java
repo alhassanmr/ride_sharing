@@ -26,11 +26,13 @@ public class CustomerController {
     private final CustomerService customerService;
     private final RideHistoryService rideHistoryService;
 
+    // Constructor injection for services
     public CustomerController(CustomerService customerService, RideHistoryService rideHistoryService) {
         this.customerService = customerService;
         this.rideHistoryService = rideHistoryService;
     }
 
+    // Endpoint to create a new customer
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer newCustomer) {
         log.info("Request to create a new customer");
@@ -38,6 +40,7 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    // Endpoint to retrieve a customer by ID
     @GetMapping("/{customerId}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
         log.info("Request to get customer by ID: {}", customerId);
@@ -45,6 +48,7 @@ public class CustomerController {
         return customer.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    // Endpoint to update an existing customer
     @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody Customer updatedCustomer) {
         log.info("Request to update customer with ID: {}", customerId);
@@ -52,6 +56,7 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    // Endpoint to delete a customer by ID
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         log.info("Request to delete customer with ID: {}", customerId);
@@ -59,6 +64,7 @@ public class CustomerController {
         return ResponseEntity.noContent().build();
     }
 
+    // Endpoint to retrieve ride history for a customer
     @GetMapping("/{customerId}/ride-history")
     public ResponseEntity<List<Ride>> getRideHistoryForCustomer(@PathVariable Long customerId) {
         Customer customer = customerService.getById(customerId).orElse(null);

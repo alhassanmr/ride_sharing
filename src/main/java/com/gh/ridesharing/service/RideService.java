@@ -24,31 +24,37 @@ public class RideService {
     private final DriverService driverService;
     private final DriverRepository driverRepository;
 
+    // Constructor injection for the repositories and services
     public RideService(RideRepository rideRepository, DriverService driverService, DriverRepository driverRepository) {
         this.rideRepository = rideRepository;
         this.driverService = driverService;
         this.driverRepository = driverRepository;
     }
 
+    // Method to create a new ride
     public Ride createRide(Ride newRide) {
         // Additional logic and validation if needed
         return rideRepository.save(newRide);
     }
 
+    // Method to get a ride by its ID
     public Ride getRideById(Long rideRequestId) {
         return rideRepository.findById(rideRequestId)
                 .orElseThrow(() -> new EntityNotFoundException("Ride request with ID " + rideRequestId + " not found."));
     }
 
+    // Method to update a ride
     public Ride updateRide(Ride updatedRide) {
         // Update the existingRideRequest object with fields from updatedRide
         return rideRepository.save(updatedRide);
     }
 
+    // Method to delete a ride request
     public void deleteRideRequest(Long rideRequestId) {
         rideRepository.deleteById(rideRequestId);
     }
 
+    // Method to rate a ride request
     public Ride rateRideRequest(Long rideRequestId, int rating) {
         Ride ride = getRideById(rideRequestId);
 
@@ -76,6 +82,8 @@ public class RideService {
 
         return ride;
     }
+
+    // Method to calculate distance between two points using Haversine formula
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         // Radius of the Earth in kilometers
         double earthRadius = 6371;
@@ -91,6 +99,8 @@ public class RideService {
 
         return earthRadius * c;
     }
+
+    // Method to find nearby drivers within a certain distance
     public List<Driver> findNearbyDrivers(String customerLocation, double maxDistanceInKm) {
         // Assuming customerLocation is a string in the format "latitude,longitude"
         String[] coordinates = customerLocation.split(",");
@@ -112,6 +122,7 @@ public class RideService {
         return nearbyDrivers;
     }
 
+    // Method to select the best driver based on criteria
     public Driver selectBestDriver(List<Driver> drivers, String customerLocation) {
         if (drivers.isEmpty()) {
             return null; // No available drivers

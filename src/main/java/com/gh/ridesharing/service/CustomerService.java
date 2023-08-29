@@ -13,11 +13,20 @@ public class CustomerService extends BaseServiceImpl<Customer> {
 
     private final CustomerRepository customerRepository;
 
+    // Constructor injection for the repository
     @Autowired
     public CustomerService(CustomerRepository customerRepository) {
         super(customerRepository);
         this.customerRepository = customerRepository;
     }
+
+    /**
+     * Get a customer by ID.
+     *
+     * @param customerId The ID of the customer to retrieve.
+     * @return The retrieved customer.
+     * @throws EntityNotFoundException if the customer is not found.
+     */
     public Customer getCustomerById(Long customerId) {
         return customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer with ID " + customerId + " not found."));
