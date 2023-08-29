@@ -3,7 +3,6 @@ package com.gh.ridesharing.controller;
 import com.gh.ridesharing.entity.User;
 import com.gh.ridesharing.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +25,13 @@ public class UserController {
     private final UserService userService;
     private final UserDetailsService userDetailsService;
 
-    @Autowired
+    // Constructor injection for services
     public UserController(UserService userService, UserDetailsService userDetailsService) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
     }
 
+    // Endpoint to create a new user
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
         log.info("Request to create a new user");
@@ -39,6 +39,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // Endpoint to update user profile
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUserProfile(@PathVariable Long userId, @RequestBody User updatedProfile) {
         log.info("Request to update user profile with ID: {}", userId);
@@ -46,18 +47,19 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // Endpoint to delete a user by ID
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         log.info("Request to delete user with ID: {}", userId);
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
+
+    // Endpoint to get all users
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         log.info("Request to get all users");
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-
 }
-

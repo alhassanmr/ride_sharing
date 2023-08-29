@@ -1,6 +1,7 @@
 package com.gh.ridesharing.entity;
 
-import com.gh.ridesharing.enums.RideRequestStatus;
+import com.gh.ridesharing.enums.RideStatus;
+import com.gh.ridesharing.enums.RideType;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -21,8 +22,8 @@ public class Ride extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fromLocation;
-    private String toLocation;
+    private String pickUpLocation;
+    private String dropOffLocation;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -30,7 +31,10 @@ public class Ride extends BaseEntity {
     private double fare;
 
     @Enumerated(EnumType.STRING)
-    private RideRequestStatus status;
+    private RideStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private RideType type;
 
     @ManyToOne
     private Customer customer;

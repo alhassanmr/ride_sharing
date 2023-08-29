@@ -41,6 +41,12 @@ public class RoleController {
         return ResponseEntity.ok(roles);
     }
 
+    /**
+     * Get role by role type.
+     *
+     * @param roleType The type of role to search for.
+     * @return ResponseEntity containing the role with the specified role type, if found.
+     */
     @GetMapping("/roleType/{roleType}")
     public ResponseEntity<Role> getRoleByRoleType(@PathVariable RoleType roleType) {
         log.info("Request to get role by role type: {}", roleType);
@@ -48,6 +54,13 @@ public class RoleController {
         return role.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Update a role by ID.
+     *
+     * @param roleId      The ID of the role to update.
+     * @param updatedRole The updated role data.
+     * @return ResponseEntity containing the updated role.
+     */
     @PutMapping("/{roleId}")
     public ResponseEntity<Role> updateRole(@PathVariable Long roleId, @RequestBody Role updatedRole) {
         log.info("Request to update role with ID: {}", roleId);
@@ -55,6 +68,12 @@ public class RoleController {
         return ResponseEntity.ok(role);
     }
 
+    /**
+     * Delete a role by ID.
+     *
+     * @param roleId The ID of the role to delete.
+     * @return ResponseEntity with no content.
+     */
     @DeleteMapping("/{roleId}")
     public ResponseEntity<Void> deleteRole(@PathVariable Long roleId) {
         log.info("Request to delete role with ID: {}", roleId);

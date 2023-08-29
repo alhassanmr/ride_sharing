@@ -1,6 +1,6 @@
 package com.gh.ridesharing.enums;
 
-public enum RideRequestType {
+public enum RideType {
     REGULAR,
     SHARED,
     PREMIUM

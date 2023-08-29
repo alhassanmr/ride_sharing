@@ -1,8 +1,11 @@
 package com.gh.ridesharing.entity;
 
+import com.gh.ridesharing.enums.Gender;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import java.util.List;
 
@@ -17,4 +20,6 @@ public class Customer extends BaseEntity {
 
     @OneToMany(mappedBy = "customer")
     private List<Booking> bookings;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 }
