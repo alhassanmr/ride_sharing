@@ -3,10 +3,10 @@ package com.gh.ridesharing.entity;
 import com.gh.ridesharing.enums.Gender;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
 import java.util.List;
 
 @Entity

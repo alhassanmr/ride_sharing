@@ -1,13 +1,12 @@
 package com.gh.ridesharing.entity;
 
 import com.gh.ridesharing.enums.RoleType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
 
 @Entity
 @Data
@@ -30,4 +29,11 @@ public class User extends BaseEntity {
 
     private boolean isActive = true;
 
+    public User() {
+    }
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 }
