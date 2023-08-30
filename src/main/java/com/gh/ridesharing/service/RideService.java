@@ -8,7 +8,7 @@ import com.gh.ridesharing.repository.DriverRepository;
 import com.gh.ridesharing.repository.RideRepository;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

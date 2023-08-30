@@ -5,9 +5,9 @@ import com.gh.ridesharing.enums.Gender;
 import com.gh.ridesharing.enums.VehicleType;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 @Data

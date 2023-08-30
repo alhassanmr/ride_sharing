@@ -2,9 +2,9 @@ package com.gh.ridesharing.entity;
 
 import com.gh.ridesharing.enums.RoleType;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 @Entity

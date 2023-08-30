@@ -2,13 +2,12 @@ package com.gh.ridesharing.entity;
 
 import com.gh.ridesharing.enums.BookingStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-
 import com.gh.ridesharing.enums.RideType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.math.BigDecimal;
