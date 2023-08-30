@@ -26,8 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:9001")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -87,7 +86,6 @@ public class AuthController {
         case DRIVER:
           user.setRoleType(RoleType.DRIVER);
           break;
-        // Add more cases if needed
         default:
           user.setRoleType(RoleType.CUSTOMER);
       }
