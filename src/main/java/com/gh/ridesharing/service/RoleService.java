@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,6 +50,11 @@ public class RoleService extends BaseServiceImpl<Role> {
 
         // Save the updated role to the database
         return roleRepository.save(existingRole);
+    }
+    // This method should retrieve all available role types
+    public List<RoleType> getAllRoleType() {
+        // Example: Return a list of all RoleType enum values
+        return Arrays.asList(RoleType.values());
     }
 }
 
