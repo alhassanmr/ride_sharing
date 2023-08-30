@@ -1,62 +1,48 @@
-RideSharing Platform
+#RideSharing Platform
 Welcome to the RideSharing platform, a convenient solution for connecting drivers and customers for seamless ride experiences.
 
-Getting Started
-To get started with the RideSharing platform, follow these steps:
+## Table of Contents
+1. [Description](#description)
+2. [Local Dev Set Up](#local-dev-set-up)
+3. [Testing Guidelines](#testing-guidelines)
+4. [Running  Application With Docker](running-application-with-docker)
+5. [Testing Application](testing-application)
 
-Prerequisites
-Before you begin, ensure you have the following prerequisites:
+## Description
+Ridesharing is a convenient solution for connecting drivers and customers for seamless ride experiences.
 
-Java Development Kit (JDK) 8 or higher
-Maven
-PostgreSQL Database
-Installation
-Clone the repository:
+## Local Dev Set Up
+You should have the following setup beforehand:
+* Java Development Kit (JDK) 8 or higher
+* PostgreSQL Database
+* Git
+* IDE (example IntelliJ)
+* Docker
+* Postman
+* (optional) Database GUI
+    * Dbeaver
+* Open the terminal and change to the directory you want to the project to be
+* Clone the project using "git clone https://github.com/alhassanmr/ridesharing.git"
+* Navigate to the project directory:
+* Navigate to the project directory:
+* Make sure to update `application.properties` with have all the appropriate database configurations once your database is configured.
+* `mvn install` all dependencies
+* `mvn spring-boot:run` to run the application
 
-bash
-Copy code
-git clone https://github.com/alhassanmr/ridesharing.git
-Navigate to the project directory:
+## Running Application With Docker
+* Open your CMD, and run the below on your CMD
+* Ensure you are at the root of the project directory
+* run command "docker-compose up" in the root folder to start application
 
-bash
-Copy code
-cd ridesharing-platform
-Install project dependencies using Maven:
+## Usage and Testing Application
+* Visit http://localhost:8080/swagger-ui.html to access the API documentation and test the endpoints.
+* With `Postman` you can test all request type
 
-bash
-Copy code
-mvn clean install
-Configuration
-Configure the database connection in src/main/resources/application.properties:
-
-properties
-Copy code
-spring.datasource.url=jdbc:postgresql://localhost:5432/ridesharingdb
-spring.datasource.username=yourusername
-spring.datasource.password=yourpassword
-Configure JWT secret key and expiration in the same file:
-
-properties
-Copy code
-jwt.secret=yourjwtsecret
-jwt.expirationMs=86400000  # 24 hours
-Database Initialization
-Run the database initialization script located in src/main/resources/data.sql to create necessary tables and initial data.
-Running the Application
-Build and run the application using Maven:
-
-bash
-Copy code
-mvn spring-boot:run
-The application will be accessible at http://localhost:8080.
-
-Usage
-Visit http://localhost:8080/swagger-ui.html to access the API documentation and test the endpoints.
-Contributing
-Contributions are welcome! To contribute to this project, follow these steps:
-
-Fork the repository.
-Create a new branch for your feature or bug fix.
-Make your changes and commit them.
-Push the changes to your fork.
-Submit a pull request to the main repository.
+## Contributing
+* Fork the repository.
+* Create a new branch for your feature or bug fix.
+* Make your changes and commit them.
+* Push the changes to your fork.
+* Create a Pull Request (PR)
+* Review and Merge
+* Keep Your Fork Synced
