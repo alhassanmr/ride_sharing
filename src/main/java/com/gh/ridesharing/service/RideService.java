@@ -1,5 +1,8 @@
 package com.gh.ridesharing.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gh.ridesharing.entity.Driver;
 import com.gh.ridesharing.entity.Ride;
 import com.gh.ridesharing.enums.FeedbackRating;
@@ -103,6 +106,21 @@ public class RideService {
     // Method to find nearby drivers within a certain distance
     public List<Driver> findNearbyDrivers(String customerLocation, double maxDistanceInKm) {
         // Assuming customerLocation is a string in the format "latitude,longitude"
+//        String json = customerLocation;
+//        // Parse the JSON using Jackson ObjectMapper
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode jsonNode = null;
+//        try {
+//            jsonNode = objectMapper.readTree(json);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        // Extract customerLatitude and customerLongitude
+//        double customerLatitude = jsonNode.get("lat").asDouble();
+//        double customerLongitude = jsonNode.get("lng").asDouble();
+
+
         String[] coordinates = customerLocation.split(",");
         double customerLatitude = Double.parseDouble(coordinates[0]);
         double customerLongitude = Double.parseDouble(coordinates[1]);
@@ -112,7 +130,7 @@ public class RideService {
         List<Driver> nearbyDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
             double driverDistance = calculateDistance(customerLatitude, customerLongitude,
-                    driver.getLatitude(), driver.getLongitude());
+                    Double.parseDouble(driver.getLatitude()), Double.parseDouble(driver.getLongitude()));
 
             if (driverDistance <= maxDistanceInKm) {
                 nearbyDrivers.add(driver);
@@ -134,7 +152,8 @@ public class RideService {
         // Calculate driver scores based on distance, availability, rating.
         Map<Driver, Double> driverScores = new HashMap<>();
         for (Driver driver : drivers) {
-            double distance = calculateDistance(customerLatitude, customerLongitude, driver.getLatitude(), driver.getLongitude());
+            double distance = calculateDistance(customerLatitude, customerLongitude, Double.parseDouble(driver.getLatitude()),
+                    Double.parseDouble(driver.getLongitude()));
             double availabilityScore = driver.getStatus() == AVAILABLE ? 1.0 : 0.0;
             double ratingScore = driver.getAverageRating() / FeedbackRating.values().length;
 

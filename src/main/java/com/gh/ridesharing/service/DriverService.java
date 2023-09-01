@@ -56,4 +56,7 @@ public class DriverService extends BaseServiceImpl<Driver> {
     public List<Driver> getAllDrivers() {
         return driverRepository.findAll();
     }
+    public List<Driver> findByUserId(Long userId) {
+        return driverRepository.findAll();
+    }
 }

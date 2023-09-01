@@ -1,11 +1,14 @@
 package com.gh.ridesharing.controller;
 
 import com.gh.ridesharing.entity.Driver;
+import com.gh.ridesharing.entity.User;
 import com.gh.ridesharing.enums.AvailabilityStatus;
 import com.gh.ridesharing.service.DriverService;
 import com.gh.ridesharing.service.RideHistoryService;
+import com.gh.ridesharing.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:9001/", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/drivers")
 @Slf4j
@@ -26,11 +30,13 @@ public class DriverController {
 
     private final DriverService driverService;
     private final RideHistoryService rideHistoryService;
+    private final UserService userService;
 
     // Constructor injection for services
-    public DriverController(DriverService driverService, RideHistoryService rideHistoryService) {
+    public DriverController(DriverService driverService, RideHistoryService rideHistoryService, UserService userService) {
         this.driverService = driverService;
         this.rideHistoryService = rideHistoryService;
+        this.userService = userService;
     }
 
     // Endpoint to create a new driver
@@ -78,6 +84,12 @@ public class DriverController {
     public ResponseEntity<List<Driver>> getAllDrivers() {
         log.info("Request to get all drivers");
         List<Driver> drivers = driverService.getAllDrivers();
+        return ResponseEntity.ok(drivers);
+    }
+    @GetMapping("/activealldrivers")
+    public ResponseEntity<List<User>> getAllActiveDrivers() {
+        log.info("Request to get all available drivers");
+        List<User> drivers = userService.getAllActiveDrivers();
         return ResponseEntity.ok(drivers);
     }
 }

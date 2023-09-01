@@ -33,7 +33,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             User superUser = new User();
             superUser.setUsername("admin");
             superUser.setEmail("admin@example.com");
-            superUser.setPassword("adminPassword"); // Encode the password
+            superUser.setPassword(passwordEncoder.encode("admin")); // Encode the password
             superUser.setRoleType(RoleType.SUPERUSER); // Assign the SUPERUSER role
 
             // Save the super user to the database
