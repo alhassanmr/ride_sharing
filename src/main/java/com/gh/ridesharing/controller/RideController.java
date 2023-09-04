@@ -1,5 +1,8 @@
 package com.gh.ridesharing.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gh.ridesharing.entity.Booking;
 import com.gh.ridesharing.entity.Customer;
 import com.gh.ridesharing.entity.Driver;
@@ -11,6 +14,7 @@ import com.gh.ridesharing.service.DriverService;
 import com.gh.ridesharing.service.RideService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:9001/", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/ride-requests")
 @Slf4j
@@ -44,21 +49,48 @@ public class RideController {
 
     // Endpoint to create a new ride
     @PostMapping("/{customerId}/create-ride")
-    public ResponseEntity<String> createRide(@PathVariable Long customerId, @RequestBody Booking booking) {
-        // Create a new Ride object and set the necessary details
+    public ResponseEntity<Driver> createRide(@PathVariable Long customerId, @RequestBody Booking booking) {
+        try {
+            Ride ride = prepareRide(customerId, booking);
+
+            List<Driver> nearbyDrivers = rideService.findNearbyDrivers(
+                    ride.getPickUpLocation(), Double.parseDouble(maximumDistanceLocation));
+
+            Driver bestDriver = rideService.selectBestDriver(nearbyDrivers, ride.getPickUpLocation());
+
+            if (bestDriver != null) {
+                ride.setDriver(bestDriver);
+                ride.setStatus(RideStatus.ACCEPTED);
+                rideService.createRide(ride);
+
+                return ResponseEntity.ok(bestDriver);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private Ride prepareRide(Long customerId, Booking booking) throws JsonProcessingException {
         Ride ride = new Ride();
-        // Assuming you have a method to get the current customer
         Customer customer = customerService.getCustomerById(customerId);
         ride.setCustomer(customer);
-        ride.setPickUpLocation(booking.getPickupLocation());
-        ride.setDropOffLocation(booking.getDropoffLocation());
-        ride.setStatus(RideStatus.PENDING); // Set the initial status
+
+        ObjectMapper mapper = new ObjectMapper();
+        ride.setPickUpLocation(convertToLocationString(mapper.readTree(booking.getPickupLocation())));
+        ride.setDropOffLocation(convertToLocationString(mapper.readTree(booking.getDropoffLocation())));
+
+        ride.setStatus(RideStatus.PENDING);
         ride.setType(booking.getType());
 
-        // Save the ride to the database
-        rideService.createRide(ride);
+        return ride;
+    }
 
-        return ResponseEntity.ok("Ride created.");
+    private String convertToLocationString(JsonNode root) {
+        String lat = String.valueOf(root.get("lat"));
+        String lng = String.valueOf(root.get("lng"));
+        return lat + "," + lng;
     }
 
     // Endpoint to find the best driver for a ride

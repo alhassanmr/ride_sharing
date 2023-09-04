@@ -102,30 +102,55 @@ public class RideService {
 
     // Method to find nearby drivers within a certain distance
     public List<Driver> findNearbyDrivers(String customerLocation, double maxDistanceInKm) {
-        // Assuming customerLocation is a string in the format "latitude,longitude"
+        // Check if the customerLocation is not null and has the required format
+        if (customerLocation == null || !customerLocation.contains(",")) {
+            throw new IllegalArgumentException("Invalid customer location format");
+        }
+
         String[] coordinates = customerLocation.split(",");
-        double customerLatitude = Double.parseDouble(coordinates[0]);
-        double customerLongitude = Double.parseDouble(coordinates[1]);
+        if (coordinates.length != 2) {
+            throw new IllegalArgumentException("Customer location should have both latitude and longitude");
+        }
+
+        double customerLatitude;
+        double customerLongitude;
+        try {
+            customerLatitude = Double.parseDouble(coordinates[0].trim());
+            customerLongitude = Double.parseDouble(coordinates[1].trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid latitude or longitude format in customer location", e);
+        }
 
         List<Driver> allDrivers = driverRepository.findAll(); // Retrieve all drivers
 
         List<Driver> nearbyDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
-            double driverDistance = calculateDistance(customerLatitude, customerLongitude,
-                    driver.getLatitude(), driver.getLongitude());
+            if (driver.getLatitude() == null || driver.getLongitude() == null) {
+                continue;  // skip drivers with null latitudes or longitudes
+            }
+
+            double driverLatitude;
+            double driverLongitude;
+            try {
+                driverLatitude = Double.parseDouble(driver.getLatitude().trim());
+                driverLongitude = Double.parseDouble(driver.getLongitude().trim());
+            } catch (NumberFormatException e) {
+                continue;  // skip drivers with invalid latitudes or longitudes
+            }
+
+            double driverDistance = calculateDistance(customerLatitude, customerLongitude, driverLatitude, driverLongitude);
 
             if (driverDistance <= maxDistanceInKm) {
                 nearbyDrivers.add(driver);
             }
         }
-
         return nearbyDrivers;
     }
 
     // Method to select the best driver based on criteria
     public Driver selectBestDriver(List<Driver> drivers, String customerLocation) {
         if (drivers.isEmpty()) {
-            return null; // No available drivers
+            return null;
         }
         String[] coordinates = customerLocation.split(",");
         double customerLatitude = Double.parseDouble(coordinates[0]);
@@ -134,7 +159,8 @@ public class RideService {
         // Calculate driver scores based on distance, availability, rating.
         Map<Driver, Double> driverScores = new HashMap<>();
         for (Driver driver : drivers) {
-            double distance = calculateDistance(customerLatitude, customerLongitude, driver.getLatitude(), driver.getLongitude());
+            double distance = calculateDistance(customerLatitude, customerLongitude, Double.parseDouble(driver.getLatitude()),
+                    Double.parseDouble(driver.getLongitude()));
             double availabilityScore = driver.getStatus() == AVAILABLE ? 1.0 : 0.0;
             double ratingScore = driver.getAverageRating() / FeedbackRating.values().length;
 
@@ -145,9 +171,7 @@ public class RideService {
         }
 
         // Find the driver with the highest score
-        Driver bestDriver = Collections.max(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
-
-        return bestDriver;
+        return Collections.max(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
 
