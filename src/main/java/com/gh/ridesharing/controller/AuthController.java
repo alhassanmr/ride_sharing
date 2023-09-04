@@ -10,13 +10,11 @@ import com.gh.ridesharing.payload.response.JwtResponse;
 import com.gh.ridesharing.payload.response.MessageResponse;
 import com.gh.ridesharing.repository.CustomerRepository;
 import com.gh.ridesharing.repository.DriverRepository;
-import com.gh.ridesharing.repository.RoleRepository;
 import com.gh.ridesharing.repository.UserRepository;
 import com.gh.ridesharing.security.jwt.JwtUtils;
 import com.gh.ridesharing.security.services.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,27 +28,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:9001/", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/auth")
 @Slf4j
 public class AuthController {
-  @Autowired
-  AuthenticationManager authenticationManager;
-  @Autowired
-  UserRepository userRepository;
-  @Autowired
-  PasswordEncoder encoder;
-  @Autowired
-  JwtUtils jwtUtils;
 
-  @Autowired
-  private CustomerRepository customerRepository;
+  private final AuthenticationManager authenticationManager;
+  private final UserRepository userRepository;
+  private final PasswordEncoder encoder;
+  private final JwtUtils jwtUtils;
 
-  @Autowired
-  private DriverRepository driverRepository;
+  private final CustomerRepository customerRepository;
+
+  private final DriverRepository driverRepository;
+
+  public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder encoder,
+                        JwtUtils jwtUtils, CustomerRepository customerRepository, DriverRepository driverRepository) {
+    this.authenticationManager = authenticationManager;
+    this.userRepository = userRepository;
+    this.encoder = encoder;
+    this.jwtUtils = jwtUtils;
+    this.customerRepository = customerRepository;
+    this.driverRepository = driverRepository;
+  }
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {

@@ -1,8 +1,5 @@
 package com.gh.ridesharing.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gh.ridesharing.entity.Driver;
 import com.gh.ridesharing.entity.Ride;
 import com.gh.ridesharing.enums.FeedbackRating;
@@ -105,45 +102,55 @@ public class RideService {
 
     // Method to find nearby drivers within a certain distance
     public List<Driver> findNearbyDrivers(String customerLocation, double maxDistanceInKm) {
-        // Assuming customerLocation is a string in the format "latitude,longitude"
-//        String json = customerLocation;
-//        // Parse the JSON using Jackson ObjectMapper
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        JsonNode jsonNode = null;
-//        try {
-//            jsonNode = objectMapper.readTree(json);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        // Extract customerLatitude and customerLongitude
-//        double customerLatitude = jsonNode.get("lat").asDouble();
-//        double customerLongitude = jsonNode.get("lng").asDouble();
-
+        // Check if the customerLocation is not null and has the required format
+        if (customerLocation == null || !customerLocation.contains(",")) {
+            throw new IllegalArgumentException("Invalid customer location format");
+        }
 
         String[] coordinates = customerLocation.split(",");
-        double customerLatitude = Double.parseDouble(coordinates[0]);
-        double customerLongitude = Double.parseDouble(coordinates[1]);
+        if (coordinates.length != 2) {
+            throw new IllegalArgumentException("Customer location should have both latitude and longitude");
+        }
+
+        double customerLatitude;
+        double customerLongitude;
+        try {
+            customerLatitude = Double.parseDouble(coordinates[0].trim());
+            customerLongitude = Double.parseDouble(coordinates[1].trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid latitude or longitude format in customer location", e);
+        }
 
         List<Driver> allDrivers = driverRepository.findAll(); // Retrieve all drivers
 
         List<Driver> nearbyDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
-            double driverDistance = calculateDistance(customerLatitude, customerLongitude,
-                    Double.parseDouble(driver.getLatitude()), Double.parseDouble(driver.getLongitude()));
+            if (driver.getLatitude() == null || driver.getLongitude() == null) {
+                continue;  // skip drivers with null latitudes or longitudes
+            }
+
+            double driverLatitude;
+            double driverLongitude;
+            try {
+                driverLatitude = Double.parseDouble(driver.getLatitude().trim());
+                driverLongitude = Double.parseDouble(driver.getLongitude().trim());
+            } catch (NumberFormatException e) {
+                continue;  // skip drivers with invalid latitudes or longitudes
+            }
+
+            double driverDistance = calculateDistance(customerLatitude, customerLongitude, driverLatitude, driverLongitude);
 
             if (driverDistance <= maxDistanceInKm) {
                 nearbyDrivers.add(driver);
             }
         }
-
         return nearbyDrivers;
     }
 
     // Method to select the best driver based on criteria
     public Driver selectBestDriver(List<Driver> drivers, String customerLocation) {
         if (drivers.isEmpty()) {
-            return null; // No available drivers
+            return null;
         }
         String[] coordinates = customerLocation.split(",");
         double customerLatitude = Double.parseDouble(coordinates[0]);
@@ -164,9 +171,7 @@ public class RideService {
         }
 
         // Find the driver with the highest score
-        Driver bestDriver = Collections.max(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
-
-        return bestDriver;
+        return Collections.max(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
 

@@ -16,7 +16,6 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public DatabaseInitializer(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
