@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,16 +23,17 @@ import static com.gh.ridesharing.enums.RoleType.DRIVER;
 public class UserService {
 
     private final UserRepository userRepository;
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-    @Autowired
-    private DriverRepository driverRepository;
+    private final DriverRepository driverRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, CustomerRepository customerRepository, DriverRepository driverRepository,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+        this.driverRepository = driverRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
