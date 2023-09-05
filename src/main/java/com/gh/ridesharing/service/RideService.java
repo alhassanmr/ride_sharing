@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.gh.ridesharing.enums.AvailabilityStatus.AVAILABLE;
+import static com.gh.ridesharing.enums.AvailabilityStatus.UNAVAILABLE;
 
 @Service
 public class RideService {
@@ -126,7 +128,7 @@ public class RideService {
         List<Driver> nearbyDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
             if (driver.getLatitude() == null || driver.getLongitude() == null) {
-                continue;  // skip drivers with null latitudes or longitudes
+                continue;
             }
 
             double driverLatitude;
@@ -135,7 +137,7 @@ public class RideService {
                 driverLatitude = Double.parseDouble(driver.getLatitude().trim());
                 driverLongitude = Double.parseDouble(driver.getLongitude().trim());
             } catch (NumberFormatException e) {
-                continue;  // skip drivers with invalid latitudes or longitudes
+                continue;
             }
 
             double driverDistance = calculateDistance(customerLatitude, customerLongitude, driverLatitude, driverLongitude);
@@ -167,14 +169,12 @@ public class RideService {
             // Calculate the overall score for the driver
             // Multiplying by 0.4 indicates that availability contributes to 40% of the final score
             double score = distance * 0.4 + availabilityScore * 0.4 + ratingScore * 0.2;
+            System.out.println(driver + " score: " + score);
             driverScores.put(driver, score);
         }
 
         // Find the driver with the highest score
-        return Collections.max(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
+        return Collections.min(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
-
-
 }
-
