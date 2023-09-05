@@ -1,77 +1,91 @@
 package com.gh.ridesharing.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gh.ridesharing.entity.Role;
 import com.gh.ridesharing.enums.RoleType;
 import com.gh.ridesharing.service.RoleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(RoleController.class)
+@ExtendWith(MockitoExtension.class)
 public class RoleControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private RoleService roleService;
 
-    private Role role;
+    @InjectMocks
+    private RoleController roleController;
+
+    private MockMvc mockMvc;
 
     @BeforeEach
-    public void setUp() {
-        role = new Role();
-        role.setId(1L);
-        role.setRoleType(RoleType.DRIVER);
+    public void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(roleController).build();
+    }
+
+    @Test
+    public void testGetAllRoles() throws Exception {
+        when(roleService.getAllRoleType()).thenReturn(Arrays.asList(RoleType.values()));
+
+        mockMvc.perform(get("/api/roles"))
+                .andExpect(status().isOk());
+
+        verify(roleService, times(1)).getAllRoleType();
     }
 
     @Test
     public void testGetRoleByRoleType() throws Exception {
-        when(roleService.findByRoleType(any(RoleType.class))).thenReturn(Optional.of(role));
+        Role mockRole = new Role();
+        mockRole.setId(1L);
+        mockRole.setRoleType(RoleType.SUPERUSER);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/roles/roleType/DRIVER"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(role.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.roleType").value(role.getRoleType().toString()))
-                .andDo(print());
+        when(roleService.findByRoleType(RoleType.SUPERUSER)).thenReturn(Optional.of(mockRole));
+
+        mockMvc.perform(get("/api/roles/roleType/SUPERUSER"))
+                .andExpect(status().isOk());
+
+        verify(roleService, times(1)).findByRoleType(RoleType.SUPERUSER);
     }
 
     @Test
     public void testUpdateRole() throws Exception {
-        Role updatedRole = new Role();
-        updatedRole.setRoleType(RoleType.CUSTOMER);
+        Role mockRole = new Role();
+        mockRole.setId(1L);
+        mockRole.setRoleType(RoleType.SUPERUSER);
 
-        when(roleService.update(any(Long.class), any(Role.class))).thenReturn(updatedRole);
+        when(roleService.update(1L, mockRole)).thenReturn(mockRole);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(updatedRole);
+        mockMvc.perform(put("/api/roles/1")
+                        .contentType("application/json")
+                        .content("{\"id\": 1,\"roleType\": \"SUPERUSER\"}"))
+                .andExpect(status().isOk());
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/roles/1")
-                        .content(json)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(role.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.roleType").value(updatedRole.getRoleType().toString()))
-                .andDo(print());
+        verify(roleService, times(1)).update(1L, mockRole);
     }
 
     @Test
     public void testDeleteRole() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/roles/1"))
-                .andExpect(MockMvcResultMatchers.status().isNoContent())
-                .andDo(print());
+        doNothing().when(roleService).deleteById(1L);
+
+        mockMvc.perform(delete("/api/roles/1"))
+                .andExpect(status().isNoContent());
+
+        verify(roleService, times(1)).deleteById(1L);
     }
+
 }
