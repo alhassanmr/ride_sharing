@@ -1,6 +1,7 @@
 package com.gh.ridesharing.service;
 
 import com.gh.ridesharing.entity.Driver;
+import com.gh.ridesharing.entity.User;
 import com.gh.ridesharing.enums.AvailabilityStatus;
 import com.gh.ridesharing.repository.DriverRepository;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+
+import static com.gh.ridesharing.enums.RoleType.DRIVER;
 
 @Service
 public class DriverService extends BaseServiceImpl<Driver> {
@@ -58,5 +61,9 @@ public class DriverService extends BaseServiceImpl<Driver> {
     }
     public List<Driver> findByUserId(Long userId) {
         return driverRepository.findAll();
+    }
+
+    public List<Driver> getAllActiveDrivers() {
+        return driverRepository.findByIsActiveAndRoleType(true, DRIVER);
     }
 }

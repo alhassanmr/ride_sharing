@@ -1,8 +1,9 @@
 package com.gh.ridesharing.enums;
 
 public enum RideStatus {
-    PENDING,
     REQUESTED,
+    ASSIGNED,
+    CONFIRMED,
     ACCEPTED,
     IN_PROGRESS,
     COMPLETED,

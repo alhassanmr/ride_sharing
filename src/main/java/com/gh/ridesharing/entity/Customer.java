@@ -27,4 +27,6 @@ public class Customer extends User {
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    private String latitude;
+    private String longitude;
 }

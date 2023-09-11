@@ -37,4 +37,7 @@ public class RideHistoryService {
     public List<Ride> getRideHistoryForDriver(Driver driver) {
         return rideRepository.findByDriverOrderByStartTimeDesc(driver);
     }
+    public List<Ride> getRidesByDriverId(Long driverId) {
+        return rideRepository.findByDriverId(driverId);
+    }
 }

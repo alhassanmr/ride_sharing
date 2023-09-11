@@ -1,6 +1,7 @@
 package com.gh.ridesharing.controller;
 
 import com.gh.ridesharing.entity.Driver;
+import com.gh.ridesharing.entity.Ride;
 import com.gh.ridesharing.entity.User;
 import com.gh.ridesharing.enums.AvailabilityStatus;
 import com.gh.ridesharing.service.DriverService;
@@ -91,5 +92,18 @@ public class DriverController {
         log.info("Request to get all available drivers");
         List<User> drivers = userService.getAllActiveDrivers();
         return ResponseEntity.ok(drivers);
+    }
+
+    // Endpoint to retrieve rides by driver ID
+    @GetMapping("/{driverId}/rides")
+    public ResponseEntity<List<Ride>> getRidesByDriverId(@PathVariable Long driverId) {
+        log.info("Request to get rides for driver ID: {}", driverId);
+        List<Ride> rides = rideHistoryService.getRidesByDriverId(driverId);
+
+        // Check if the list is not empty
+        if (rides.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(rides);
     }
 }
