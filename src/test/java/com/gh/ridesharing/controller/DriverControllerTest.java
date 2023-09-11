@@ -2,6 +2,7 @@ package com.gh.ridesharing.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gh.ridesharing.entity.Driver;
+import com.gh.ridesharing.entity.Ride;
 import com.gh.ridesharing.entity.User;
 import com.gh.ridesharing.enums.AvailabilityStatus;
 import com.gh.ridesharing.service.DriverService;
@@ -158,5 +159,37 @@ public class DriverControllerTest {
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).getAllActiveDrivers();
+    }
+
+
+    @Test
+    public void testGetRidesByDriverIdWithRides() throws Exception {
+        Long driverId = 1L;
+        List<Ride> mockRides = new ArrayList<>();
+        Ride mockRide = new Ride(); // You can set any fields if necessary.
+        mockRides.add(mockRide);
+
+        when(rideHistoryService.getRidesByDriverId(driverId)).thenReturn(mockRides);
+
+        mockMvc.perform(get("/api/drivers/" + driverId + "/rides")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        verify(rideHistoryService, times(1)).getRidesByDriverId(driverId);
+    }
+
+    @Test
+    public void testGetRidesByDriverIdWithoutRides() throws Exception {
+        Long driverId = 1L;
+        List<Ride> mockRides = new ArrayList<>();
+
+        when(rideHistoryService.getRidesByDriverId(driverId)).thenReturn(mockRides);
+
+        mockMvc.perform(get("/api/drivers/" + driverId + "/rides")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verify(rideHistoryService, times(1)).getRidesByDriverId(driverId);
     }
 }
