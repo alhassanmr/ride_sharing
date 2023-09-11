@@ -123,7 +123,7 @@ public class RideService {
             throw new IllegalArgumentException("Invalid latitude or longitude format in customer location", e);
         }
 
-        List<Driver> allDrivers = driverRepository.findAll(); // Retrieve all drivers
+        List<Driver> allDrivers = driverService.getAllActiveDrivers();
 
         List<Driver> nearbyDrivers = new ArrayList<>();
         for (Driver driver : allDrivers) {
@@ -176,5 +176,54 @@ public class RideService {
         // Find the driver with the highest score
         return Collections.min(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
+
+    public List<Ride> getRidesByCustomerId(Long customerId) {
+        return rideRepository.findByCustomer_Id(customerId);
+    }
+
+    public Ride confirmRideByDriver(Long rideId) {
+        Ride ride = getRideById(rideId);
+        if (ride == null) {
+            throw new IllegalArgumentException("Ride not found!");
+        }
+
+        if (ride.getDriver() == null) {
+            throw new IllegalArgumentException("No driver assigned to this ride!");
+        }
+
+        if (ride.getStatus() != RideStatus.CONFIRMED) {
+            throw new IllegalStateException("Ride cannot be confirmed!");
+        }
+
+        ride.setStatus(RideStatus.ACCEPTED);
+        return rideRepository.save(ride);
+    }
+
+    public Ride confirmRideByCustomer(Long rideId) {
+        // Fetch the ride using rideId
+        Ride ride = getRideById(rideId);
+
+        // Check if the ride exists
+        if (ride == null) {
+            throw new IllegalArgumentException("Ride not found!");
+        }
+
+        // Ensure the ride is assigned to a driver before it can be confirmed by the customer
+        if (ride.getDriver() == null) {
+            throw new IllegalArgumentException("No driver assigned to this ride!");
+        }
+
+        // Check if the ride is in the "ASSIGNED" state before customer's confirmation
+        if (ride.getStatus() != RideStatus.ASSIGNED) {
+            throw new IllegalStateException("Only an ASSIGNED ride can be confirmed by the customer!");
+        }
+
+        // Update the status to "CONFIRMED"
+        ride.setStatus(RideStatus.CONFIRMED);
+
+        // Save the updated ride and return it
+        return rideRepository.save(ride);
+    }
+
 
 }

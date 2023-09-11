@@ -94,6 +94,8 @@ public class AuthController {
       customer.setEmail(signUpRequest.getEmail());
       customer.setPassword(encoder.encode(signUpRequest.getPassword()));
       customer.setRoleType(RoleType.CUSTOMER);
+      customer.setLatitude("5.680700707224108");
+      customer.setLongitude("-0.17289221424750062");
       customerRepository.save(customer);
     } else {
       switch (roleType) {
@@ -111,6 +113,8 @@ public class AuthController {
           driver.setEmail(signUpRequest.getEmail());
           driver.setPassword(encoder.encode(signUpRequest.getPassword()));
           driver.setRoleType(RoleType.DRIVER);
+          driver.setLatitude("5.680041576742313");
+          driver.setLongitude("-0.17274813958990698");
           driverRepository.save(driver);
           break;
         default:
@@ -120,6 +124,8 @@ public class AuthController {
           customer.setEmail(signUpRequest.getEmail());
           customer.setPassword(encoder.encode(signUpRequest.getPassword()));
           customer.setRoleType(RoleType.CUSTOMER);
+          customer.setLatitude("5.680700707224108");
+          customer.setLongitude("-0.17289221424750062");
           customerRepository.save(customer);
       }
     }

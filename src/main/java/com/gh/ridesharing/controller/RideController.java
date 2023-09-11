@@ -60,7 +60,7 @@ public class RideController {
 
             if (bestDriver != null) {
                 ride.setDriver(bestDriver);
-                ride.setStatus(RideStatus.ACCEPTED);
+                ride.setStatus(RideStatus.ASSIGNED);
                 rideService.createRide(ride);
 
                 return ResponseEntity.ok(bestDriver);
@@ -81,7 +81,7 @@ public class RideController {
         ride.setPickUpLocation(convertToLocationString(mapper.readTree(booking.getPickupLocation())));
         ride.setDropOffLocation(convertToLocationString(mapper.readTree(booking.getDropoffLocation())));
 
-        ride.setStatus(RideStatus.PENDING);
+        ride.setStatus(RideStatus.REQUESTED);
         ride.setType(booking.getType());
 
         return ride;
@@ -160,6 +160,43 @@ public class RideController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
+    // Endpoint to retrieve all rides for a specific customer
+    @GetMapping("/customer/{customerId}/ride")
+    public ResponseEntity<List<Ride>> getRidesForCustomer(@PathVariable Long customerId) {
+        List<Ride> rides = rideService.getRidesByCustomerId(customerId);
+
+        if (rides != null && !rides.isEmpty()) {
+            return ResponseEntity.ok(rides);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/driver/{rideId}/confirm")
+    public ResponseEntity<Ride> confirmRideByDriver(@PathVariable Long rideId) {
+        try {
+            Ride confirmedRide = rideService.confirmRideByDriver(rideId);
+            return ResponseEntity.ok(confirmedRide);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PostMapping("/customer/{rideId}/confirm")
+    public ResponseEntity<Ride> confirmRideByCustomer(@PathVariable Long rideId) {
+        try {
+            Ride confirmedRide = rideService.confirmRideByCustomer(rideId);
+            return ResponseEntity.ok(confirmedRide);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 
 }
 

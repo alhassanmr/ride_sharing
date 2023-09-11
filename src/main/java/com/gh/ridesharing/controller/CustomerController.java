@@ -6,6 +6,7 @@ import com.gh.ridesharing.service.CustomerService;
 import com.gh.ridesharing.service.RideHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:9001/", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/customers")
 @Slf4j
@@ -75,4 +77,13 @@ public class CustomerController {
         List<Ride> rideHistory = rideHistoryService.getRideHistoryForCustomer(customer);
         return ResponseEntity.ok(rideHistory);
     }
+
+    // Endpoint to retrieve all customers
+    @GetMapping
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        log.info("Request to get all customers");
+        List<Customer> customers = customerService.getAll();
+        return ResponseEntity.ok(customers);
+    }
+
 }
