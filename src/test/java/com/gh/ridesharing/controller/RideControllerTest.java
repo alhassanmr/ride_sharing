@@ -13,6 +13,7 @@ import com.gh.ridesharing.service.RideService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -215,4 +218,191 @@ public class RideControllerTest {
         verify(customerService, times(1)).getCustomerById(anyLong());
     }
 
+    @Test
+    @DisplayName("Successfully confirm ride by customer")
+    public void testConfirmRideByCustomer_Success() {
+        long rideId = 1L;
+        Ride confirmedRide = new Ride();
+        confirmedRide.setId(rideId);
+
+        when(rideService.confirmRideByCustomer(rideId)).thenReturn(confirmedRide);
+
+        ResponseEntity<Ride> responseEntity = rideController.confirmRideByCustomer(rideId);
+
+        assertNotNull(responseEntity);
+        assertEquals(confirmedRide, responseEntity.getBody());
+        assertEquals(ResponseEntity.ok().build().getStatusCode(), responseEntity.getStatusCode());
+
+        verify(rideService, times(1)).confirmRideByCustomer(rideId);
+    }
+
+    @Test
+    @DisplayName("Fail to confirm ride by customer due to ride not found")
+    public void testConfirmRideByCustomer_RideNotFound() {
+        long rideId = 1L;
+
+        when(rideService.confirmRideByCustomer(rideId)).thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<Ride> responseEntity = rideController.confirmRideByCustomer(rideId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), responseEntity.getStatusCode());
+
+        verify(rideService, times(1)).confirmRideByCustomer(rideId);
+    }
+
+    @Test
+    @DisplayName("Fail to confirm ride by customer due to illegal state")
+    public void testConfirmRideByCustomer_IllegalState() {
+        long rideId = 1L;
+
+        when(rideService.confirmRideByCustomer(rideId)).thenThrow(new IllegalStateException());
+
+        ResponseEntity<Ride> responseEntity = rideController.confirmRideByCustomer(rideId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.badRequest().build().getStatusCode(), responseEntity.getStatusCode());
+
+        verify(rideService, times(1)).confirmRideByCustomer(rideId);
+    }
+
+    @Test
+    @DisplayName("Successfully retrieve rides for a customer")
+    public void testGetRidesForCustomer_Success() {
+        long customerId = 1L;
+        List<Ride> rides = Arrays.asList(new Ride(), new Ride());
+
+        when(rideService.getRidesByCustomerId(customerId)).thenReturn(rides);
+
+        ResponseEntity<List<Ride>> responseEntity = rideController.getRidesForCustomer(customerId);
+
+        assertNotNull(responseEntity);
+        assertEquals(rides, responseEntity.getBody());
+        assertEquals(ResponseEntity.ok().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("No rides found for the customer")
+    public void testGetRidesForCustomer_NoRidesFound() {
+        long customerId = 1L;
+
+        when(rideService.getRidesByCustomerId(customerId)).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<Ride>> responseEntity = rideController.getRidesForCustomer(customerId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Successfully confirm ride by driver")
+    public void testConfirmRideByDriver_Success() {
+        long rideId = 1L;
+        Ride confirmedRide = new Ride();
+        confirmedRide.setId(rideId);
+
+        when(rideService.confirmRideByDriver(rideId)).thenReturn(confirmedRide);
+
+        ResponseEntity<Ride> responseEntity = rideController.confirmRideByDriver(rideId);
+
+        assertNotNull(responseEntity);
+        assertEquals(confirmedRide, responseEntity.getBody());
+        assertEquals(ResponseEntity.ok().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Fail to confirm ride by driver due to ride not found")
+    public void testConfirmRideByDriver_RideNotFound() {
+        long rideId = 1L;
+
+        when(rideService.confirmRideByDriver(rideId)).thenThrow(new IllegalArgumentException());
+
+        ResponseEntity<Ride> responseEntity = rideController.confirmRideByDriver(rideId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Fail to confirm ride by driver due to illegal state")
+    public void testConfirmRideByDriver_IllegalState() {
+        long rideId = 1L;
+
+        when(rideService.confirmRideByDriver(rideId)).thenThrow(new IllegalStateException());
+
+        ResponseEntity<Ride> responseEntity = rideController.confirmRideByDriver(rideId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.badRequest().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Ride exists and a best driver is found")
+    public void testFindBestDriverForRide_Success() {
+        long rideId = 1L;
+
+        Ride mockRide = new Ride();
+        mockRide.setId(rideId);
+        mockRide.setPickUpLocation("Location");
+
+        Driver mockDriver = new Driver();
+        mockDriver.setId(2L);
+
+        // Set up the maximumDistanceLocation for testing
+        ReflectionTestUtils.setField(rideController, "maximumDistanceLocation", "100");
+
+        when(rideService.getRideById(rideId)).thenReturn(mockRide);
+        when(rideService.findNearbyDrivers(mockRide.getPickUpLocation(), Double.parseDouble("100")))
+                .thenReturn(Arrays.asList(mockDriver));
+        when(rideService.selectBestDriver(any(), any())).thenReturn(mockDriver);
+        when(rideService.updateRide(any())).thenReturn(mockRide);
+
+        ResponseEntity<Driver> responseEntity = rideController.findBestDriverForRide(rideId);
+
+        assertNotNull(responseEntity);
+        assertEquals(mockDriver, responseEntity.getBody());
+        assertEquals(ResponseEntity.ok().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Ride exists but no best driver is found")
+    public void testFindBestDriverForRide_NoDriverFound() {
+        long rideId = 1L;
+
+        Ride mockRide = new Ride();
+        mockRide.setId(rideId);
+        mockRide.setPickUpLocation("Location");
+        // Set up the maximumDistanceLocation for testing
+        ReflectionTestUtils.setField(rideController, "maximumDistanceLocation", "100");
+
+        when(rideService.getRideById(rideId)).thenReturn(mockRide);
+        when(rideService.findNearbyDrivers(mockRide.getPickUpLocation(), Double.parseDouble("100")))
+                .thenReturn(Collections.emptyList());
+        when(rideService.selectBestDriver(any(), any())).thenReturn(null);
+
+        ResponseEntity<Driver> responseEntity = rideController.findBestDriverForRide(rideId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Ride does not exist")
+    public void testFindBestDriverForRide_RideNotFound() {
+        long rideId = 1L;
+
+        when(rideService.getRideById(rideId)).thenReturn(null);
+
+        ResponseEntity<Driver> responseEntity = rideController.findBestDriverForRide(rideId);
+
+        assertNotNull(responseEntity);
+        assertNull(responseEntity.getBody());
+        assertEquals(ResponseEntity.notFound().build().getStatusCode(), responseEntity.getStatusCode());
+    }
 }

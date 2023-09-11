@@ -13,6 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -117,5 +120,31 @@ public class CustomerControllerTest {
 
         verify(customerService, times(1)).getById(1L);
         verify(rideHistoryService, times(0)).getRideHistoryForCustomer(any()); // ensure ride history is not fetched for non-existent customer
+    }
+
+    @Test
+    public void testGetAllCustomers() throws Exception {
+        // Sample data
+        Customer customer1 = new Customer();
+        customer1.setFirstName("John");
+        customer1.setLastName("Doe");
+
+        Customer customer2 = new Customer();
+        customer2.setFirstName("Jane");
+        customer2.setLastName("Smith");
+
+        // Mock the service call
+        when(customerService.getAll()).thenReturn(Arrays.asList(customer1, customer2));
+
+        mockMvc.perform(get("/api/customers"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(2)))  // Expecting 2 customers in the list
+                .andExpect(jsonPath("$[0].firstName", is("John")))
+                .andExpect(jsonPath("$[0].lastName", is("Doe")))
+                .andExpect(jsonPath("$[1].firstName", is("Jane")))
+                .andExpect(jsonPath("$[1].lastName", is("Smith")));
+
+        verify(customerService, times(1)).getAll();
     }
 }

@@ -168,13 +168,13 @@ public class RideService {
 
             // Calculate the overall score for the driver
             // Multiplying by 0.4 indicates that availability contributes to 40% of the final score
-            double score = distance * 0.4 + availabilityScore * 0.4 + ratingScore * 0.2;
+            double score = distance * 0.8 + availabilityScore * 0.1 + ratingScore * 0.1;
             System.out.println(driver + " score: " + score);
             driverScores.put(driver, score);
         }
 
         // Find the driver with the highest score
-        return Collections.min(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
+        return Collections.max(driverScores.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
     public List<Ride> getRidesByCustomerId(Long customerId) {
